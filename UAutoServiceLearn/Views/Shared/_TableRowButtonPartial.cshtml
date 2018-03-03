@@ -1,0 +1,35 @@
+﻿@model UAutoServiceLearn.Models.SmallButtonPartial
+
+<td style="width:150px">
+    <div class="btn-group" role="group">
+        @Html.Partial("_SmallButtonPartial",
+      new SmallButtonPartial
+      {
+          ActionName = "Edit",
+          ButtonStyleType = "btn-primary",
+          GlyphIcon = "pencil",
+          Text = "Edit",
+          ServiceId = Model.ServiceId
+      })
+
+        @Html.Partial("_SmallButtonPartial",
+     new SmallButtonPartial
+     {
+         ActionName = "Details",
+         ButtonStyleType = "btn-success",
+         GlyphIcon = "list",
+         Text = "Details",
+         ServiceId = Model.ServiceId
+     })
+
+        @Html.Partial("_SmallButtonPartial",
+        new SmallButtonPartial
+        {
+            ActionName = "Delete",
+            ButtonStyleType = "btn-danger",
+            GlyphIcon = "trash",
+            Text = "Delete",
+            ServiceId = Model.ServiceId
+        })
+    </div>
+</td>

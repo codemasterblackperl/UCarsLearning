@@ -1,0 +1,36 @@
+﻿@model IEnumerable<UAutoServiceLearn.Models.ServiceType>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<h2>Manage Service Types</h2>
+<hr />
+
+<div class="form-border">
+    <p>
+        <a asp-action="Create" class="btn btn-sm btn-primary">Create New</a>
+    </p>
+    <br />
+    <table class="table table-condensed table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Name)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m=>item.Name)
+                </td>
+                <td>
+                    @Html.Partial("_TableRowButtonPartial",new SmallButtonPartial {ServiceId=item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
