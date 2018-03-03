@@ -69,15 +69,18 @@ namespace UAutoServiceLearn.Controllers
 
         //post: ServiceTypes/Edit
         [HttpPost]
-        public async Task<IActionResult> Edit(ServiceType serviceType)
+        public async Task<IActionResult> Edit(int id,ServiceType serviceType)
         {
             if (!ModelState.IsValid)
                 return View(serviceType);
 
-            var service = await _db.ServiceTypes.FindAsync(serviceType.Id);
-            service.Name = serviceType.Name;
+            if (id != serviceType.Id)
+                return View(serviceType);
 
-            _db.ServiceTypes.Update(service);
+            //var service = await _db.ServiceTypes.FindAsync(serviceType.Id);
+            //service.Name = serviceType.Name;
+
+            _db.ServiceTypes.Update(serviceType);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index");
@@ -107,6 +110,19 @@ namespace UAutoServiceLearn.Controllers
             return RedirectToAction("Index");
         }
 
+
+        //get: ServiceTypes/Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var service = await _db.ServiceTypes.FindAsync(id);
+            if (service == null)
+                return NotFound();
+
+            return View(service);
+        }
 
     }
 }
