@@ -27,7 +27,7 @@
                     @Html.DisplayFor(m=>item.Name)
                 </td>
                 <td>
-                    @Html.Partial("_TableRowButtonPartial",new SmallButtonPartial {ServiceId=item.Id })
+                    @Html.Partial("_TableRowButtonPartial",new SmallButtonPartial {ServiceId=item.Id.ToString() })
                 </td>
             </tr>
         }

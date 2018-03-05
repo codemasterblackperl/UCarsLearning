@@ -12,14 +12,15 @@ namespace UAutoServiceLearn.Models
         public string GlyphIcon { get; set; }
         public string Text { get; set; }
 
-        public int? ServiceId { get; set; }
+        //public int? ServiceId { get; set; }
+        public string ServiceId { get; set; }
 
         public string ActionParameters
         {
             get
             {
                 var param = "";
-                if(ServiceId!=null&&ServiceId!=0)
+                if(!string.IsNullOrEmpty(ServiceId))
                 {
                     param= @"/" + $"{ServiceId}";
                 }
