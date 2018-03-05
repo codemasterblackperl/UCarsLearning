@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
 using UAutoServiceLearn.Models.AccountViewModels;
 using UAutoServiceLearn.Services;
+using UAutoServiceLearn.Utilities;
 
 namespace UAutoServiceLearn.Controllers
 {
@@ -22,17 +24,23 @@ namespace UAutoServiceLearn.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _db;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext db,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
+            _db = db;
             _emailSender = emailSender;
             _logger = logger;
         }
@@ -220,10 +228,33 @@ namespace UAutoServiceLearn.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName=model.FirstName,
+                    LastName=model.LastName,
+                    Address=model.Address,
+                    City=model.City,
+                    PostalCode=model.PostalCode,
+                    PhoneNumber=model.PhoneNumber
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    if (!await _roleManager.RoleExistsAsync(StaticDetails.Customer))
+                        await _roleManager.CreateAsync(new IdentityRole (StaticDetails.Customer ));
+
+                    if (!await _roleManager.RoleExistsAsync(StaticDetails.Admin))
+                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.Admin));
+
+                    if (model.IsAdmin)
+                    {
+                        await _userManager.AddToRoleAsync(user, StaticDetails.Admin);
+                    }
+                    else
+                        await _userManager.AddToRoleAsync(user, StaticDetails.Customer);
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

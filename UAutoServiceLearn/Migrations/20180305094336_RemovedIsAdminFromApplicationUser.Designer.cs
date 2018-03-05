@@ -10,9 +10,10 @@ using UAutoServiceLearn.Data;
 namespace UAutoServiceLearn.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180305094336_RemovedIsAdminFromApplicationUser")]
+    partial class RemovedIsAdminFromApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
