@@ -10,9 +10,10 @@ using UAutoServiceLearn.Data;
 namespace UAutoServiceLearn.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180306131806_AddedPropertiesToCar")]
+    partial class AddedPropertiesToCar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -72,8 +72,19 @@ namespace UAutoServiceLearn.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    
+                    if(await _userManager.IsInRoleAsync(user,StaticDetails.Admin))
+                    {
+                        return RedirectToAction("Index", "Users");
+                    }
+                    else if(await _userManager.IsInRoleAsync(user,StaticDetails.Customer))
+                    {
+                        return RedirectToAction("Index", "Cars", new { id = user.Id });
+                    }
+
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -257,13 +268,23 @@ namespace UAutoServiceLearn.Controllers
 
                     _logger.LogInformation("User created a new account with password.");
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                    //await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
+                    if(User.IsInRole(StaticDetails.Admin))
+                    {
+                        return RedirectToAction("Index", "Users");
+                    }
+                    else
+                    {
+                        var userDetail = await _userManager.FindByEmailAsync(model.Email);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("User created a new account with password.");
+                        return RedirectToAction("Index", "Cars", new { id = userDetail.Id });
+                    }
+
+                    
                 }
                 AddErrors(result);
             }

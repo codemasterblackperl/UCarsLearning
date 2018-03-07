@@ -1,0 +1,126 @@
+﻿@model UAutoServiceLearn.ViewModels.CarAndCustomerViewModel
+@using UAutoServiceLearn.Utilities
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<h2>Car record for customer</h2>
+<hr />
+<br />
+
+<div class="row" style="padding-bottom:80px">
+    <div class="col-sm-6" style="padding-bottom:80px">
+        <a asp-action="Create" asp-route-userId="@Model.User.Id" class="btn btn-sm btn-primary">
+            <span class="glyphicon glyphicon-plus"></span>&nbsp; Add New Car
+        </a>
+    </div>
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="custom-label" asp-for="User.FirstName"></label>
+            </div>
+            <div class="col-sm-8">
+                <input class="form-control" disabled asp-for="User.FirstName" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="custom-label" asp-for="User.LastName"></label>
+            </div>
+            <div class="col-sm-8">
+                <input class="form-control" disabled asp-for="User.LastName" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="custom-label" asp-for="User.Email"></label>
+            </div>
+            <div class="col-sm-8">
+                <input class="form-control" disabled asp-for="User.Email" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="custom-label" asp-for="User.PhoneNumber"></label>
+            </div>
+            <div class="col-sm-8">
+                <input class="form-control" disabled asp-for="User.PhoneNumber" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Cars == null || Model.Cars.Count() == 0)
+{
+    <div class="text-primary form-border">
+        No cars foung for this user ! Please add new car.
+    </div>
+}
+else
+{
+    <div class="form-border">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => Model.Cars.FirstOrDefault().VIN)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => Model.Cars.FirstOrDefault().Make)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => Model.Cars.FirstOrDefault().Model)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => Model.Cars.FirstOrDefault().Style)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => Model.Cars.FirstOrDefault().Color)
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            @foreach (var car in Model.Cars)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => car.VIN)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => car.Make)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => car.Model)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => car.Style)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => car.Color)
+                    </td>
+                    @if (User.IsInRole(StaticDetails.Customer))
+                    {
+                        <td>
+                            <a class="btn btn-sm btn-success" asp-action="Index" asp-controller="Services" asp-route-carId="@car.Id">
+                                <span class="glyphicon glyphicon-plus">&nbsp; New Service</span>
+                            </a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="Index" asp-controller="Services" asp-route-carId="@car.Id">
+                                <span class="glyphicon glyphicon-wrench"></span>&nbsp; Service History
+                            </a>
+                        </td>
+                    }
+                    <td>
+                        @Html.Partial("_TableRowButtonPartial", new SmallButtonPartial { ServiceId = car.Id.ToString() })
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+}

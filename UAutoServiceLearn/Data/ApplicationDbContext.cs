@@ -18,6 +18,7 @@ namespace UAutoServiceLearn.Data
         }
 
         public DbSet<ServiceType> ServiceTypes { get; set; }
+        public DbSet<Car> Cars { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
