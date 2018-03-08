@@ -1,0 +1,57 @@
+﻿@model UAutoServiceLearn.ViewModels.CarAndServicesViewModel
+@using UAutoServiceLearn.Utilities
+<div>
+    <table class="table table-hover table-condensed">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.PastServices.FirstOrDefault().Miles)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.PastServices.FirstOrDefault().Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.PastServices.FirstOrDefault().Details)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.PastServices.FirstOrDefault().DateAdded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.PastServices.FirstOrDefault().ServiceType.Name)
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var service in Model.PastServices)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => service.Miles)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => service.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => service.Details)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => service.DateAdded)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => service.ServiceType.Name)
+                </td>
+                <td>
+                    @if (service.DateAdded.Date == DateTime.Now.Date&&User.IsInRole(StaticDetails.Admin))
+                    {
+                        @Html.Partial("_SmallButtonPartial", new SmallButtonPartial
+                        {
+                            ActionName = "Delete",
+                            ButtonStyleType = "btn-danger",
+                            GlyphIcon = "trash",
+                            Text = "Delete",
+                            ServiceId = service.Id.ToString()
+                        })
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

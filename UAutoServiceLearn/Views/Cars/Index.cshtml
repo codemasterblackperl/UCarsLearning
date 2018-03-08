@@ -99,11 +99,11 @@ else
                     <td>
                         @Html.DisplayFor(m => car.Color)
                     </td>
-                    @if (User.IsInRole(StaticDetails.Customer))
+                    @if (User.IsInRole(StaticDetails.Admin))
                     {
                         <td>
-                            <a class="btn btn-sm btn-success" asp-action="Index" asp-controller="Services" asp-route-carId="@car.Id">
-                                <span class="glyphicon glyphicon-plus">&nbsp; New Service</span>
+                            <a class="btn btn-sm btn-success" asp-action="Create" asp-controller="Services" asp-route-carId="@car.Id">
+                                <span class="glyphicon glyphicon-plus"></span>&nbsp; New Service
                             </a>
                         </td>
                     }

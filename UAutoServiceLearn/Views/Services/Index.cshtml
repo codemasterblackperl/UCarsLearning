@@ -1,0 +1,19 @@
+﻿@model UAutoServiceLearn.ViewModels.CarAndServicesViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+@Html.Partial("_CarDetailsAndService")
+<hr />
+<br />
+
+<h4>Service Record</h4>
+<div class="form-border row">
+    @Html.Partial("_DisplayPastServices")
+
+    <input type="button" class="btn btn-sm btn-primary" value="Print" onclick="window.print();" />
+
+    <a asp-controller="Cars" asp-action="Index" asp-route-id="@Model.UserId" class="btn btn-sm btn-success">Back</a>
+</div>
+
