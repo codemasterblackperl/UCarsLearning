@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
 using UAutoServiceLearn.Models.AccountViewModels;
+using UAutoServiceLearn.Utilities;
 
 namespace UAutoServiceLearn.Controllers
 {
+    [Authorize(Roles = StaticDetails.Admin)]
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -129,10 +132,24 @@ namespace UAutoServiceLearn.Controllers
             if (userDetail == null)
                 return NotFound();
 
+            var cars = _db.Cars.Where(x => x.UserId == userDetail.Id);
+
+            if (cars.Count() > 0)
+            {
+                foreach (var car in cars.ToList())
+                {
+                    var services = _db.Services.Where(x => x.CarId == car.Id);
+                    _db.Services.RemoveRange(services);
+                }
+
+                _db.Cars.RemoveRange(cars);
+            }
+
             _db.Users.Remove(userDetail);
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index");
+
         }
 
 

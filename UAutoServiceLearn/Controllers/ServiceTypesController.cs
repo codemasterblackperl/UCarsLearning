@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
+using UAutoServiceLearn.Utilities;
 
 namespace UAutoServiceLearn.Controllers
 {
+    [Authorize(Roles =StaticDetails.Admin)]
     public class ServiceTypesController : Controller
     {
         protected readonly ApplicationDbContext _db;

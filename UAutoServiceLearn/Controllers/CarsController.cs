@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
@@ -10,6 +11,7 @@ using UAutoServiceLearn.ViewModels;
 
 namespace UAutoServiceLearn.Controllers
 {
+    [Authorize]
     public class CarsController : Controller
     {
         private readonly ApplicationDbContext _db;

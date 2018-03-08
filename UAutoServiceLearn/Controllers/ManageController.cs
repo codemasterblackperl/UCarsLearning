@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
 using UAutoServiceLearn.Models.ManageViewModels;
 using UAutoServiceLearn.Services;
@@ -26,6 +27,8 @@ namespace UAutoServiceLearn.Controllers
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
 
+        private readonly ApplicationDbContext _db;
+
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
 
@@ -34,13 +37,15 @@ namespace UAutoServiceLearn.Controllers
           SignInManager<ApplicationUser> signInManager,
           IEmailSender emailSender,
           ILogger<ManageController> logger,
-          UrlEncoder urlEncoder)
+          UrlEncoder urlEncoder,
+          ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _db = dbContext;
         }
 
         [TempData]
@@ -61,7 +66,12 @@ namespace UAutoServiceLearn.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsEmailConfirmed = user.EmailConfirmed,
-                StatusMessage = StatusMessage
+                StatusMessage = StatusMessage,
+                FirstName=user.FirstName,
+                LastName=user.LastName,
+                Address=user.Address,
+                City=user.City,
+                PostalCode=user.PostalCode
             };
 
             return View(model);
@@ -82,25 +92,16 @@ namespace UAutoServiceLearn.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var email = user.Email;
-            if (model.Email != email)
-            {
-                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
-                if (!setEmailResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
-                }
-            }
+            var userInDb = _db.Users.Where(u => u.Email.Equals(model.Email)).FirstOrDefault();
+            userInDb.FirstName = model.FirstName;
+            userInDb.LastName = model.LastName;
+            userInDb.Address = model.Address;
+            userInDb.City = model.City;
+            userInDb.PostalCode = model.PostalCode;
+            userInDb.PhoneNumber = model.PhoneNumber;
 
-            var phoneNumber = user.PhoneNumber;
-            if (model.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
-                }
-            }
+            //_db.Users.Update(userInDb);
+            await _db.SaveChangesAsync();
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UAutoServiceLearn.Data;
 using UAutoServiceLearn.Models;
+using UAutoServiceLearn.Utilities;
 using UAutoServiceLearn.ViewModels;
 
 namespace UAutoServiceLearn.Controllers
@@ -26,6 +28,7 @@ namespace UAutoServiceLearn.Controllers
             base.Dispose(disposing);
         }
 
+        [Authorize]
         public async Task<IActionResult> Index(int? carId)
         {
             if (carId == null)
@@ -51,7 +54,9 @@ namespace UAutoServiceLearn.Controllers
             return View(model);
         }
 
+
         //get: Service/Create
+        [Authorize(Roles = StaticDetails.Admin)]
         public async Task<IActionResult> Create(int? carId)
         {
             if (carId == null)
@@ -78,6 +83,7 @@ namespace UAutoServiceLearn.Controllers
         }
 
         //post Service/Create
+        [Authorize(Roles = StaticDetails.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CarAndServicesViewModel csModel)
@@ -113,6 +119,7 @@ namespace UAutoServiceLearn.Controllers
         }
 
         //get: delete/serviceId
+        [Authorize(Roles = StaticDetails.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,6 +133,7 @@ namespace UAutoServiceLearn.Controllers
         }
 
         //post: delete/serviceId
+        [Authorize(Roles = StaticDetails.Admin)]
         [HttpPost,ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Service model)
         {
